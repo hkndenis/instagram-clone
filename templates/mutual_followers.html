@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">Karşılıklı Takipleştiklerim</h2>
+    <div class="row">
+        {% for user in mutual_followers %}
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <a href="{{ url_for('user_profile', username=user.username) }}">
+                            {{ user.username }}
+                        </a>
+                    </h5>
+                    <p class="card-text">{{ user.full_name }}</p>
+                    <div class="d-flex justify-content-between">
+                        <span>📝 {{ user.post_count }} gönderi</span>
+                        <span>❤️ {{ user.total_likes_received }} beğeni</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="col-12">
+            <p class="text-center">Henüz karşılıklı takipleştiğiniz kimse yok.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %} 

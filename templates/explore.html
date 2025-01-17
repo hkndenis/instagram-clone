@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">Keşfet</h2>
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">En Çok Beğenilen Fotoğraflar</h5>
+                    <p class="card-text">En çok beğeni alan fotoğrafları keşfedin.</p>
+                    <a href="{{ url_for('most_liked_photos') }}" class="btn btn-primary">Görüntüle</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Popüler Kullanıcılar</h5>
+                    <p class="card-text">En çok takip edilen kullanıcıları keşfedin.</p>
+                    <a href="{{ url_for('popular_users') }}" class="btn btn-primary">Görüntüle</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Karşılıklı Takipleştiklerim</h5>
+                    <p class="card-text">Karşılıklı takipleştiğiniz kullanıcıları görün.</p>
+                    <a href="{{ url_for('mutual_followers') }}" class="btn btn-primary">Görüntüle</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Diğer keşfet kartları buraya eklenebilir -->
+    </div>
+</div>
+{% endblock %} 

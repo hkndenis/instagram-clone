@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h2 class="mb-4">En Çok Beğenilen Fotoğraflar</h2>
+    <div class="row">
+        {% for photo in photos %}
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-img-container" style="height: 300px; overflow: hidden;">
+                    <img src="{{ photo.image_url }}" 
+                         class="card-img-top post-image" 
+                         alt="Post image"
+                         data-caption="{{ photo.caption }}"
+                         data-post-id="{{ photo.post_id }}"
+                         style="width: 100%; height: 100%; object-fit: cover; cursor: pointer;">
+                </div>
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-2">
+                        <img src="{{ photo.avatar_url|default('/static/images/default-avatar.png') }}" 
+                             alt="{{ photo.username }}" 
+                             class="rounded-circle me-2"
+                             style="width: 32px; height: 32px; object-fit: cover;">
+                        <h5 class="card-title mb-0">
+                            <a href="{{ url_for('user_profile', username=photo.username) }}" class="text-dark text-decoration-none">{{ photo.username }}</a>
+                        </h5>
+                    </div>
+                    <p class="card-text">{{ photo.caption }}</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <button class="btn btn-sm like-btn" 
+                                    data-post-id="{{ photo.post_id }}"
+                                    style="border: none; background: none; padding: 0; margin-right: 10px;">
+                                {% if photo.user_has_liked %}
+                                    ❤️
+                                {% else %}
+                                    🖤
+                                {% endif %}
+                                <span class="like-count">{{ photo.like_count }}</span>
+                            </button>
+                            <a href="#" 
+                               style="border: none; background: none; padding: 0; text-decoration: none; color: inherit;"
+                               onclick="event.preventDefault();">
+                                💬 <span class="comment-count">{{ photo.comment_count }}</span>
+                            </a>
+                        </div>
+                        <small class="text-muted">{{ photo.created_at.strftime('%d.%m.%Y %H:%M') }}</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const likeButtons = document.querySelectorAll('.like-btn');
+    
+    likeButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const postId = this.dataset.postId;
+            const heartEmoji = this.firstChild;
+            const likeCount = this.querySelector('.like-count');
+            
+            fetch(`/post/${postId}/like`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token() }}'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    if (data.action === 'like') {
+                        heartEmoji.textContent = '❤️';
+                        likeCount.textContent = parseInt(likeCount.textContent) + 1;
+                    } else {
+                        heartEmoji.textContent = '🖤';
+                        likeCount.textContent = parseInt(likeCount.textContent) - 1;
+                    }
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    });
+
+    // Lightbox'ı başlat
+    new Lightbox();
+});
+</script>
+{% endblock %} 

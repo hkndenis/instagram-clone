@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="alert alert-danger">
+    <h4>Hata!</h4>
+    <p>{{ error }}</p>
+    <a href="{{ url_for('index') }}" class="btn btn-primary">Ana Sayfaya Dön</a>
+</div>
+{% endblock %}

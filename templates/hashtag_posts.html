@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">#{{ tag.replace('#', '') }}</h2>
+    
+    <div class="row">
+        {% for post in posts %}
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-header d-flex align-items-center">
+                    <img src="{{ post.avatar_url }}" alt="{{ post.username }}" class="rounded-circle me-2" style="width: 32px; height: 32px;">
+                    <a href="{{ url_for('user_profile', username=post.username) }}" class="text-dark text-decoration-none">{{ post.username }}</a>
+                </div>
+                <img src="{{ post.image_url }}" class="card-img-top post-image" alt="Post image" style="object-fit: cover; height: 300px;" data-post-id="{{ post.post_id }}" data-caption="{{ post.caption }}">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <div>
+                            <button class="btn btn-sm like-btn" 
+                                    data-post-id="{{ post.post_id }}"
+                                    style="border: none; background: none; padding: 0; margin-right: 10px;">
+                                {% if post.user_has_liked %}
+                                    ❤️
+                                {% else %}
+                                    🖤
+                                {% endif %}
+                                <span class="like-count">{{ post.like_count }}</span>
+                            </button>
+                            <a href="#" 
+                               style="border: none; background: none; padding: 0; text-decoration: none; color: inherit;"
+                               onclick="event.preventDefault();">
+                                💬 <span class="comment-count">{{ post.comment_count }}</span>
+                            </a>
+                        </div>
+                        <small class="text-muted">{{ post.created_at.strftime('%d.%m.%Y %H:%M') }}</small>
+                    </div>
+                    <p class="card-text">{{ post.caption }}</p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const lightbox = new Lightbox();
+    
+    // Beğeni butonları için olay dinleyicisi
+    const likeButtons = document.querySelectorAll('.like-btn');
+    likeButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const postId = this.dataset.postId;
+            const heartEmoji = this.firstChild;
+            const likeCount = this.querySelector('.like-count');
+            
+            fetch(`/post/${postId}/like`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token() }}'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    if (data.action === 'like') {
+                        heartEmoji.textContent = '❤️';
+                        likeCount.textContent = parseInt(likeCount.textContent) + 1;
+                    } else {
+                        heartEmoji.textContent = '🖤';
+                        likeCount.textContent = parseInt(likeCount.textContent) - 1;
+                    }
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    });
+
+    // Fotoğraflara tıklama olayı
+    const postImages = document.querySelectorAll('.post-image');
+    postImages.forEach(img => {
+        img.addEventListener('click', function() {
+            const card = this.closest('.card');
+            const postId = this.dataset.postId;
+            const caption = card.querySelector('.card-text').textContent;
+            const imageUrl = this.src;
+            const userLink = card.querySelector('.text-dark');
+            const username = userLink.textContent.trim();
+            const avatarImg = card.querySelector('.rounded-circle');
+            const avatarUrl = avatarImg.src;
+            const likeCount = card.querySelector('.like-count').textContent;
+            const hasLiked = card.querySelector('.like-btn').firstChild.textContent.trim() === '❤️';
+            
+            lightbox.openWithData({
+                post_id: postId,
+                image_url: imageUrl,
+                caption: caption,
+                username: username,
+                avatar_url: avatarUrl,
+                like_count: parseInt(likeCount),
+                has_liked: hasLiked
+            });
+        });
+    });
+});
+</script>
+
+<style>
+.card {
+    transition: transform 0.2s;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.like-btn {
+    transition: transform 0.2s;
+}
+
+.like-btn:hover {
+    transform: scale(1.1);
+}
+
+.post-image {
+    transition: transform 0.3s ease;
+    cursor: pointer;
+}
+
+.post-image:hover {
+    transform: scale(1.05);
+}
+</style>
+{% endblock %} 

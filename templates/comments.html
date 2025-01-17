@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <img src="{{ post.image_url }}" class="card-img-top" alt="Post image">
+                <div class="card-body">
+                    <h5 class="card-title">{{ post.username }}</h5>
+                    <p class="card-text">{{ post.caption }}</p>
+                </div>
+            </div>
+
+            <!-- Yorum Formu -->
+            <form method="POST" class="mb-4">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <div class="input-group">
+                    <input type="text" name="comment_text" class="form-control" placeholder="Yorumunuzu yazın...">
+                    <button type="submit" class="btn btn-primary">Gönder</button>
+                </div>
+            </form>
+
+            <!-- Yorumlar Listesi -->
+            <div class="comments-list">
+                {% for comment in comments %}
+                <div class="card mb-2">
+                    <div class="card-body">
+                        <h6 class="card-subtitle mb-2 text-muted">{{ comment.username }}</h6>
+                        <p class="card-text">{{ comment.comment_text }}</p>
+                        <small class="text-muted">{{ comment.created_at.strftime('%d.%m.%Y %H:%M') }}</small>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

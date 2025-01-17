@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">Popüler Hashtagler</h2>
+    
+    <div class="row">
+        {% for hashtag in hashtags %}
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <a href="{{ url_for('hashtag_posts', tag=hashtag.tag.replace('#', '')) }}" class="text-decoration-none">
+                            {{ hashtag.tag }}
+                        </a>
+                    </h5>
+                    <p class="card-text">
+                        📝 <strong>{{ hashtag.usage_count }}</strong> gönderi<br>
+                        👤 <strong>{{ hashtag.unique_users }}</strong> farklı kullanıcı<br>
+                        ❤️ <strong>{{ hashtag.total_likes }}</strong> beğeni
+                    </p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %} 

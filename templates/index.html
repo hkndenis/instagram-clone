@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        {% for post in posts %}
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-img-container" style="height: 300px; overflow: hidden;">
+                    <img src="{{ post.image_url }}" 
+                         class="card-img-top post-image" 
+                         alt="Post image"
+                         data-caption="{{ post.caption }}"
+                         style="width: 100%; height: 100%; object-fit: cover;">
+                </div>
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-2">
+                        <img src="{{ post.avatar_url|default('/static/images/Default_pfp.jpg') }}" 
+                             alt="{{ post.username }}" 
+                             class="rounded-circle me-2"
+                             style="width: 32px; height: 32px; object-fit: cover;">
+                        <a href="/user/{{ post.username }}" class="text-dark text-decoration-none" style="font-size: 0.9rem; font-weight: 600;">
+                            {{ post.username }}
+                        </a>
+                    </div>
+                    <p class="card-text">{{ post.caption }}</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <button class="btn btn-sm like-btn" 
+                                    data-post-id="{{ post.post_id }}"
+                                    style="border: none; background: none; padding: 0; margin-right: 10px;">
+                                {% if post.user_has_liked %}
+                                    ❤️
+                                {% else %}
+                                    🖤
+                                {% endif %}
+                                <span class="like-count">{{ post.like_count }}</span>
+                            </button>
+                            <a href="#" 
+                               style="border: none; background: none; padding: 0; text-decoration: none; color: inherit;"
+                               onclick="event.preventDefault();">
+                                💬 <span class="comment-count">{{ post.comment_count }}</span>
+                            </a>
+                        </div>
+                        <small class="text-muted">{{ post.created_at.strftime('%d.%m.%Y %H:%M') }}</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<style>
+.card {
+    transition: transform 0.2s;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.like-btn {
+    transition: transform 0.2s;
+}
+
+.like-btn:hover {
+    transform: scale(1.1);
+}
+
+.card-img-container {
+    position: relative;
+    overflow: hidden;
+    background-color: #f8f9fa;
+}
+
+.post-image {
+    transition: transform 0.3s ease;
+}
+
+.post-image:hover {
+    transform: scale(1.05);
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const lightbox = new Lightbox();
+    
+    const likeButtons = document.querySelectorAll('.like-btn');
+    
+    likeButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const postId = this.dataset.postId;
+            const heartEmoji = this.firstChild;
+            const likeCount = this.querySelector('.like-count');
+            
+            fetch(`/post/${postId}/like`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token() }}'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    if (data.action === 'like') {
+                        heartEmoji.textContent = '❤️';
+                        likeCount.textContent = parseInt(likeCount.textContent) + 1;
+                    } else {
+                        heartEmoji.textContent = '🖤';
+                        likeCount.textContent = parseInt(likeCount.textContent) - 1;
+                    }
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    });
+
+    // Lightbox için görsellere tıklama olayı
+    const postImages = document.querySelectorAll('.post-image');
+    postImages.forEach(img => {
+        img.addEventListener('click', function() {
+            const card = this.closest('.card');
+            const likeBtn = card.querySelector('.like-btn');
+            const postId = likeBtn.dataset.postId;
+            const caption = this.dataset.caption;
+            const imageUrl = this.src;
+            const userLink = card.querySelector('.text-dark');
+            const username = userLink.textContent.trim();
+            const avatarImg = card.querySelector('.rounded-circle');
+            const avatarUrl = avatarImg.src;
+            const likeCount = card.querySelector('.like-count').textContent;
+            const hasLiked = card.querySelector('.like-btn').firstChild.textContent.trim() === '❤️';
+            
+            lightbox.openWithData({
+                post_id: postId,
+                image_url: imageUrl,
+                caption: caption,
+                username: username,
+                avatar_url: avatarUrl,
+                like_count: parseInt(likeCount),
+                has_liked: hasLiked
+            });
+        });
+    });
+});
+</script>
+{% endblock %} 

@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>Instagram Clone</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/lightbox.css') }}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .post-image {
+            cursor: pointer;
+            transition: opacity 0.3s;
+        }
+        .post-image:hover {
+            opacity: 0.9;
+        }
+
+        /* Navbar stilleri */
+        .navbar-nav {
+            margin-left: auto;
+        }
+
+        /* Dropdown animasyonları */
+        .dropdown-menu {
+            display: block;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+        }
+
+        .dropdown:hover .dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown-item {
+            transition: all 0.2s ease;
+            padding: 8px 20px;
+        }
+
+        .dropdown-item:hover {
+            background-color: #f8f9fa;
+            transform: translateX(5px);
+        }
+
+        /* Navbar link hover efekti */
+        .nav-link {
+            position: relative;
+            padding: 8px 15px;
+        }
+
+        /* Keşfet linki için özel stil */
+        .nav-link[href="#"] {
+            text-decoration: none;
+        }
+
+        /* Diğer linkler için hover efekti */
+        .nav-link:not([href="#"])::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 50%;
+            background-color: #0d6efd;
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+
+        .nav-link:not([href="#"]):hover::after {
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="{{ url_for('index') }}">
+                <img src="{{ url_for('static', filename='images/logo.svg') }}" alt="Instagram Clone" height="32" class="me-2">
+                <span class="h5 mb-0">Instagram Clone</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                {% if session.user_id %}
+                <div class="navbar-nav">
+                    <a class="nav-link" href="{{ url_for('index') }}">Ana Sayfa</a>
+                    <a class="nav-link" href="{{ url_for('my_posts') }}">Gönderilerim</a>
+                    <a class="nav-link" href="{{ url_for('create_post') }}">Yeni Gönderi</a>
+                    <div class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" 
+                           data-bs-toggle="dropdown" aria-expanded="false">
+                            Keşfet
+                        </a>
+                        <ul class="dropdown-menu shadow-sm" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" href="{{ url_for('most_liked_photos') }}">En Çok Beğenilen Fotoğraflar</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('popular_users') }}">Popüler Kullanıcılar</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('trending_posts') }}">Trend Gönderiler</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('mutual_followers') }}">Karşılıklı Takipleşenler</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('recent_activity') }}">Son Aktiviteler</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('popular_hashtags') }}">Popüler Hashtagler</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('user_engagement') }}">Kullanıcı Etkileşimleri</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{{ url_for('active_commenters') }}">Aktif Yorumcular</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('inactive_users') }}">Pasif Kullanıcılar</a></li>
+                        </ul>
+                    </div>
+                    <a class="nav-link" href="{{ url_for('logout') }}">Çıkış Yap</a>
+                </div>
+                {% else %}
+                <div class="navbar-nav">
+                    <a class="nav-link" href="{{ url_for('login') }}">Giriş</a>
+                    <a class="nav-link" href="{{ url_for('register') }}">Kayıt Ol</a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        {% block content %}{% endblock %}
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/lightbox.js') }}"></script>
+</body>
+</html> 

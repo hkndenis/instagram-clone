@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">Yeni Gönderi Oluştur</h2>
+    
+    <form method="POST" enctype="multipart/form-data">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        
+        <div class="mb-3">
+            <label for="image" class="form-label">Resim Seç</label>
+            <input type="file" class="form-control" id="image" name="image" accept="image/png,image/jpeg,image/gif" required>
+        </div>
+        
+        <div class="mb-3">
+            <label for="caption" class="form-label">Açıklama</label>
+            <textarea class="form-control" id="caption" name="caption" rows="3" placeholder="Gönderiniz için bir açıklama yazın..." required></textarea>
+        </div>
+        
+        <button type="submit" class="btn btn-primary">Gönderi Oluştur</button>
+    </form>
+</div>
+
+<script>
+document.getElementById('image').addEventListener('change', function(e) {
+    if (this.files && this.files[0]) {
+        const fileSize = this.files[0].size / 1024 / 1024; // MB cinsinden
+        if (fileSize > 5) {
+            alert('Dosya boyutu 5MB\'dan küçük olmalıdır!');
+            this.value = '';
+        }
+    }
+});
+
+// Form gönderilmeden önce kontrol
+document.querySelector('form').addEventListener('submit', function(e) {
+    const caption = document.getElementById('caption').value.trim();
+    if (!caption) {
+        e.preventDefault();
+        alert('Lütfen bir açıklama yazın!');
+    }
+});
+</script>
+{% endblock %} 

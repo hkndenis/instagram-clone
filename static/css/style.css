@@ -1,0 +1,47 @@
+.card {
+    margin-bottom: 20px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.card-img-top {
+    height: 300px;
+    object-fit: cover;
+    width: 100%;
+}
+
+.like-btn {
+    transition: all 0.3s ease;
+}
+
+.like-btn.liked {
+    background-color: #dc3545;
+    border-color: #dc3545;
+}
+
+.navbar {
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+}
+
+.post-form {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.alert {
+    margin-bottom: 20px;
+}
+
+.btn-link {
+    color: #000;
+    padding: 0;
+    border: none;
+}
+
+.btn-link:hover {
+    color: #dc3545;
+}
+
+.liked {
+    color: #dc3545;
+} 

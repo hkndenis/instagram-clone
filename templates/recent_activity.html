@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">Son 24 Saat Aktiviteleri</h2>
+    
+    <div class="list-group">
+        {% for activity in activities %}
+            <div class="list-group-item">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <a href="{{ url_for('user_profile', username=activity.username) }}" class="text-decoration-none">
+                            <strong>{{ activity.username }}</strong>
+                        </a>
+                        {% if activity.activity_type == 'post_like' %}
+                            {% if activity.is_my_post %}
+                                gönderini beğendi
+                            {% else %}
+                                bir gönderiyi beğendi
+                            {% endif %}
+                        {% elif activity.activity_type == 'comment' %}
+                            {% if activity.is_my_post %}
+                                gönderine yorum yaptı: 
+                            {% else %}
+                                bir gönderiye yorum yaptı: 
+                            {% endif %}
+                            <span class="text-muted">{{ activity.comment_text }}</span>
+                        {% elif activity.activity_type == 'comment_like' %}
+                            {% if activity.is_my_comment %}
+                                yorumunu beğendi:
+                            {% else %}
+                                bir yorumu beğendi:
+                            {% endif %}
+                            <span class="text-muted">{{ activity.comment_text }}</span>
+                        {% endif %}
+                        <a href="#" class="text-decoration-none" onclick="openLightbox('{{ activity.post_id }}'); return false;">
+                            <small class="text-primary">(Gönderiyi görüntüle)</small>
+                        </a>
+                    </div>
+                    <small class="text-muted">
+                        {{ activity.activity_time.strftime('%H:%M') }}
+                    </small>
+                </div>
+            </div>
+        {% else %}
+            <div class="alert alert-info">
+                Son 24 saatte hiç aktivite yok.
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+function openLightbox(postId) {
+    fetch(`/post/${postId}/details`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const lightbox = new Lightbox();
+                lightbox.openWithData(data.post);
+            }
+        })
+        .catch(error => console.error('Error:', error));
+}
+</script>
+{% endblock %} 

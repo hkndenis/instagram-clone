@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h2 class="mb-4">Kullanıcı Etkileşim Oranları</h2>
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead class="table-light">
+                <tr>
+                    <th>Kullanıcı</th>
+                    <th>Gönderi</th>
+                    <th>Aldığı Beğeni</th>
+                    <th>Yaptığı Beğeni</th>
+                    <th>Aldığı Yorum</th>
+                    <th>Yaptığı Yorum</th>
+                    <th>Takipçi</th>
+                    <th>Takip</th>
+                    <th>Etkileşim Oranı</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in engagements %}
+                <tr>
+                    <td>
+                        <a href="{{ url_for('user_profile', username=user.username) }}" style="color: blue; text-decoration: underline; cursor: pointer;">
+                            {{ user.username }}
+                        </a>
+                    </td>
+                    <td>{{ user.post_count }}</td>
+                    <td>{{ user.likes_received }}</td>
+                    <td>{{ user.likes_given }}</td>
+                    <td>{{ user.comments_received }}</td>
+                    <td>{{ user.comments_made }}</td>
+                    <td>{{ user.followers }}</td>
+                    <td>{{ user.following }}</td>
+                    <td>{{ "%.2f"|format(user.engagement_rate) }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %} 

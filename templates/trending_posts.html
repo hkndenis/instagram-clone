@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h2 class="mb-4">Trend Gönderiler</h2>
+    <div class="row">
+        {% for post in posts %}
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-img-container" style="height: 300px; overflow: hidden;">
+                    <img src="{{ post.image_url }}" 
+                         class="card-img-top post-image" 
+                         alt="Post image"
+                         data-caption="{{ post.caption }}"
+                         data-post-id="{{ post.post_id }}"
+                         style="width: 100%; height: 100%; object-fit: cover; cursor: pointer;">
+                </div>
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-2">
+                        <img src="{{ post.avatar_url|default('/static/images/default-avatar.png') }}" 
+                             alt="{{ post.username }}" 
+                             class="rounded-circle me-2"
+                             style="width: 32px; height: 32px; object-fit: cover;">
+                        <h5 class="card-title mb-0">
+                            <a href="{{ url_for('user_profile', username=post.username) }}" class="text-dark text-decoration-none">{{ post.username }}</a>
+                        </h5>
+                    </div>
+                    <p class="card-text">{{ post.caption }}</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <button class="btn btn-sm like-btn" 
+                                    data-post-id="{{ post.post_id }}"
+                                    style="border: none; background: none; padding: 0; margin-right: 10px;">
+                                {% if post.user_has_liked %}
+                                    ❤️
+                                {% else %}
+                                    🖤
+                                {% endif %}
+                                <span class="like-count">{{ post.like_count }}</span>
+                            </button>
+                            <a href="#" 
+                               style="border: none; background: none; padding: 0; text-decoration: none; color: inherit;"
+                               onclick="event.preventDefault();">
+                                💬 <span class="comment-count">{{ post.comment_count }}</span>
+                            </a>
+                        </div>
+                        <small class="text-muted">
+                            Toplam Etkileşim: {{ post.total_interactions }}
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="col-12">
+            <p class="text-center">Henüz hiç gönderi yok.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const likeButtons = document.querySelectorAll('.like-btn');
+    
+    likeButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const postId = this.dataset.postId;
+            const heartEmoji = this.firstChild;
+            const likeCount = this.querySelector('.like-count');
+            
+            fetch(`/post/${postId}/like`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token() }}'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    if (data.action === 'like') {
+                        heartEmoji.textContent = '❤️';
+                        likeCount.textContent = parseInt(likeCount.textContent) + 1;
+                    } else {
+                        heartEmoji.textContent = '🖤';
+                        likeCount.textContent = parseInt(likeCount.textContent) - 1;
+                    }
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    });
+
+    // Lightbox'ı başlat
+    new Lightbox();
+});
+</script>
+{% endblock %} 
