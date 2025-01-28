@@ -66,5 +66,3 @@ Aşağıdaki ortam değişkenlerini `.env` dosyasında tanımlamanız gerekmekte
 ## Lisans
 
 Bu proje MIT lisansı altında lisanslanmıştır. Detaylar için `LICENSE` dosyasına bakın. 
-
-#deneme

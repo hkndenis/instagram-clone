@@ -60,7 +60,7 @@
         }
 
         /* Diğer linkler için hover efekti */
-        .nav-link:not([href="#"])::after {
+        .nav-link:not([href="#"]):after {
             content: '';
             position: absolute;
             width: 0;
@@ -92,7 +92,9 @@
                 <div class="navbar-nav">
                     <a class="nav-link" href="{{ url_for('index') }}">Ana Sayfa</a>
                     <a class="nav-link" href="{{ url_for('my_posts') }}">Gönderilerim</a>
-                    <a class="nav-link" href="{{ url_for('create_post') }}">Yeni Gönderi</a>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('web_create_post') }}">Yeni Gönderi</a>
+                    </li>
                     <div class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" 
                            data-bs-toggle="dropdown" aria-expanded="false">

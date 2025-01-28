@@ -4,7 +4,7 @@
 <div class="container mt-4">
     <h2 class="mb-4">Yeni Gönderi Oluştur</h2>
     
-    <form method="POST" enctype="multipart/form-data">
+    <form method="POST" action="{{ url_for('web_create_post') }}" enctype="multipart/form-data">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         
         <div class="mb-3">

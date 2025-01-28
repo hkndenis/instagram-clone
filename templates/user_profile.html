@@ -44,8 +44,8 @@
                         Takip Et
                     {% endif %}
                 </button>
-                {% endif %}
-            </div>
+            {% endif %}
+    </div>
 
             <div class="row mt-4">
                 <h4 class="mb-4">
@@ -55,8 +55,8 @@
                         Gönderiler
                     {% endif %}
                 </h4>
-                {% for post in posts %}
-                <div class="col-md-4 mb-4">
+        {% for post in posts %}
+        <div class="col-md-4 mb-4">
                     <div class="card h-100">
                         <div class="card-img-container" style="height: 300px; overflow: hidden;">
                             <img src="{{ post.image_url }}" 
@@ -65,7 +65,7 @@
                                  data-caption="{{ post.caption }}"
                                  style="width: 100%; height: 100%; object-fit: cover;">
                         </div>
-                        <div class="card-body">
+                <div class="card-body">
                             <div class="d-flex align-items-center mb-2">
                                 <img src="{{ user.avatar_url|default('/static/images/Default_pfp.jpg') }}" 
                                      alt="{{ user.username }}" 
@@ -73,24 +73,24 @@
                                      style="width: 32px; height: 32px; object-fit: cover;">
                                 <a href="/user/{{ user.username }}" class="text-dark text-decoration-none">{{ user.username }}</a>
                             </div>
-                            <p class="card-text">{{ post.caption }}</p>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div>
-                                    <button class="btn btn-sm like-btn" 
-                                            data-post-id="{{ post.post_id }}"
-                                            style="border: none; background: none; padding: 0; margin-right: 10px;">
-                                        {% if post.user_has_liked %}
-                                            ❤️
-                                        {% else %}
-                                            🖤
-                                        {% endif %}
-                                        <span class="like-count">{{ post.like_count }}</span>
-                                    </button>
+                    <p class="card-text">{{ post.caption }}</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <button class="btn btn-sm like-btn" 
+                                    data-post-id="{{ post.post_id }}"
+                                    style="border: none; background: none; padding: 0; margin-right: 10px;">
+                                {% if post.user_has_liked %}
+                                    ❤️
+                                {% else %}
+                                    🖤
+                                {% endif %}
+                                <span class="like-count">{{ post.like_count }}</span>
+                            </button>
                                     <a href="#" 
                                        style="border: none; background: none; padding: 0; text-decoration: none; color: inherit;"
                                        onclick="event.preventDefault();">
-                                        💬 <span class="comment-count">{{ post.comment_count }}</span>
-                                    </a>
+                                💬 <span class="comment-count">{{ post.comment_count }}</span>
+                            </a>
                                 </div>
                                 {% if session.user_id == user.user_id %}
                                 <button class="btn btn-sm delete-btn text-danger" 
@@ -198,29 +198,29 @@ document.addEventListener('DOMContentLoaded', function() {
     // Beğeni butonu
     const likeButtons = document.querySelectorAll('.like-btn');
     likeButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            const postId = this.dataset.postId;
+    button.addEventListener('click', function() {
+        const postId = this.dataset.postId;
             const heartEmoji = this.firstChild;
             const likeCount = this.querySelector('.like-count');
             
-            fetch(`/post/${postId}/like`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
+        fetch(`/post/${postId}/like`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
                     'X-CSRFToken': '{{ csrf_token() }}'
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    if (data.action === 'like') {
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                if (data.action === 'like') {
                         heartEmoji.textContent = '❤️';
-                        likeCount.textContent = parseInt(likeCount.textContent) + 1;
-                    } else {
+                    likeCount.textContent = parseInt(likeCount.textContent) + 1;
+                } else {
                         heartEmoji.textContent = '🖤';
-                        likeCount.textContent = parseInt(likeCount.textContent) - 1;
-                    }
+                    likeCount.textContent = parseInt(likeCount.textContent) - 1;
                 }
+            }
             })
             .catch(error => console.error('Error:', error));
         });
@@ -234,15 +234,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 const postId = this.dataset.postId;
                 
                 fetch(`/post/${postId}/delete`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
                         'X-CSRFToken': '{{ csrf_token() }}'
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
                         this.closest('.col-md-4').remove();
                     }
                 })

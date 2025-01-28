@@ -2,10 +2,18 @@ function handleLogin(event) {
     event.preventDefault();
     
     const formData = new FormData(loginForm);
+    const data = {
+        username: formData.get('username'),
+        password: formData.get('password')
+    };
     
-    fetch('/login', {
+    fetch('/web/login', {
         method: 'POST',
-        body: formData
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').content
+        },
+        body: JSON.stringify(data)
     })
     .then(response => response.json())
     .then(data => {
@@ -22,4 +30,9 @@ function handleLogin(event) {
         console.error('Giriş hatası:', error);
         showError(loginError, 'Giriş yapılırken bir hata oluştu.');
     });
+}
+
+function showError(element, message) {
+    element.textContent = message;
+    element.style.display = 'block';
 } 

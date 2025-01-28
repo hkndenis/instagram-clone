@@ -352,10 +352,22 @@ class Lightbox {
         this.username.href = `/user/${currentImage.username}`;
         this.username.textContent = currentImage.username;
         
+        // Caption güncelleme
+        let captionElement = this.overlay.querySelector('.lightbox-caption');
+        if (!captionElement) {
+            captionElement = document.createElement('p');
+            captionElement.className = 'lightbox-caption';
+            captionElement.style.padding = '10px 16px';
+            captionElement.style.margin = '0';
+            captionElement.style.borderBottom = '1px solid #dbdbdb';
+            const header = this.overlay.querySelector('.lightbox-header');
+            header.insertAdjacentElement('afterend', captionElement);
+        }
+        captionElement.textContent = currentImage.caption;
+        
         this.likeButton.innerHTML = currentImage.has_liked ? '❤️' : '🖤';
         this.likeCount.textContent = currentImage.like_count;
         
-        // Yorum sayısını güncelle ama yorumları otomatik yükleme
         fetch(`/post/${currentImage.post_id}/comments`)
             .then(response => response.json())
             .then(data => {
